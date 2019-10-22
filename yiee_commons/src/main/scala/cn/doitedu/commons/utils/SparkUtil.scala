@@ -4,12 +4,11 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
 /**
- * @date: 2019/8/25
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: sparksession构建工具
+ **/
 object SparkUtil {
 
   /**

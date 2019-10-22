@@ -3,12 +3,11 @@ package cn.doitedu.commons.utils
 import scala.collection.mutable.ListBuffer
 
 /**
-  * @date: 2019/9/6
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 用户行为与业务路径的匹配工具
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 用户行为与业务路径的匹配工具
+ **/
 object TransactionRouteMatch {
 
   /**

@@ -10,12 +10,11 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * @date: 2019/9/1
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
  * @description: 造数据：历史用户记录
- */
+ **/
 public class HisuDataFactory {
     public static void main(String[] args) throws Exception {
 

@@ -5,28 +5,28 @@ import org.apache.spark.sql.SparkSession
 
 
 /**
- * @date: 2019/9/16
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  各类字典加载工具
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
+  * @description: 各类字典加载工具
   *
-  *  步鄹：
-  *  1、加载地域信息字典 loadAreaDict    "user_profile/data/areadict"
-  *  2、加载idmapping映射字典  loadIdmpDict    "user_profile/data/output/idmp/day01"
-  *  3、加载app信息字典  loadAppDict   "user_profile/data/appdict"
-  *  4、加载url内容信息字典  loadUrlContentDict
- */
+  *               步鄹：
+  *               1、加载地域信息字典 loadAreaDict    "user_profile/data/areadict"
+  *               2、加载idmapping映射字典  loadIdmpDict    "user_profile/data/output/idmp/day01"
+  *               3、加载app信息字典  loadAppDict   "user_profile/data/appdict"
+  *               4、加载url内容信息字典  loadUrlContentDict
+  **/
 object DictsLoader {
 
 
   /**
     * 加载地域信息字典  geo province  city  district
-    * @param spark  sparksession
-    * @param path 字典所在路径
+    *
+    * @param spark sparksession
+    * @param path  字典所在路径
     * @return
     */
-  def loadAreaDict(spark:SparkSession,path:String):collection.Map[String, (String, String,String)]={
+  def loadAreaDict(spark: SparkSession, path: String): collection.Map[String, (String, String, String)] = {
 
     val areaDF = spark.read.parquet(path)
     val areaMap: collection.Map[String, (String, String, String)] = areaDF
@@ -45,11 +45,12 @@ object DictsLoader {
 
   /**
     * 加载idmapping映射字典 id, gid
+    *
     * @param spark
     * @param path
     * @return
     */
-  def loadIdmpDict(spark:SparkSession,path:String):collection.Map[Long, Long] = {
+  def loadIdmpDict(spark: SparkSession, path: String): collection.Map[Long, Long] = {
     val idmpDF = spark.read.parquet(path)
     val idmpMap: collection.Map[Long, Long] = idmpDF
       .rdd
@@ -67,11 +68,12 @@ object DictsLoader {
 
   /**
     * 加载app信息字典
+    *
     * @param spark
     * @param path
     * @return
     */
-  def loadAppDict(spark:SparkSession,path:String):collection.Map[String, (String, String)]={
+  def loadAppDict(spark: SparkSession, path: String): collection.Map[String, (String, String)] = {
     val appDs = spark.read.textFile(path)
     val appMap: collection.Map[String, (String, String)] = appDs
       .rdd
@@ -92,14 +94,14 @@ object DictsLoader {
   }
 
 
-
   /**
     * 加载url内容信息字典
+    *
     * @param spark
     * @param path
     * @return
     */
-  def loadUrlContentDict(spark:SparkSession,path:String):collection.Map[String, (String, String)]={
+  def loadUrlContentDict(spark: SparkSession, path: String): collection.Map[String, (String, String)] = {
     val urlContentDs = spark.read.textFile(path)
     val urlContentMap: collection.Map[String, (String, String)] = urlContentDs
       .rdd

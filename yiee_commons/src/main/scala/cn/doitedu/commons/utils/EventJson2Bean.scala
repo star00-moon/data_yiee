@@ -4,14 +4,11 @@ import cn.doitedu.commons.beans.EventLogBean
 import com.alibaba.fastjson.JSON
 
 /**
-  * @date: 2019/8/27
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 事件日志json转成EventLogBean
-  *
-  *
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 事件日志json转成EventLogBean
+ **/
 object EventJson2Bean {
 
   def genBean(json: String): EventLogBean = {

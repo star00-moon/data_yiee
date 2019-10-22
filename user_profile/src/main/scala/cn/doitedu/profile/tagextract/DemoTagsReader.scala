@@ -5,17 +5,17 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SparkSession}
 
 
-/*
- * @author: 余辉
- * @create:
- * @description:
- * 1、提取各个标签，返回：gid，模块，便签，值，权重
- * 2、读取Event标签 ： user_profile/demodata/tags/day02/eventtags
- * 3、读取竞价日志标签  ：user_profile/demodata/tags/day02/dsptags
- * 4、读取移动数据：user_profile/demodata/tags/day02/cmcctags
- * 5、消费商品退拒表:user_profile/demodata/tags/day02/usergoodstags
- * 6、消费订单:user_profile/demodata/tags/day02/userordertags
- */
+/**
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
+  *          1、提取各个标签，返回：gid，模块，便签，值，权重
+  *          2、读取Event标签 ： user_profile/demodata/tags/day02/eventtags
+  *          3、读取竞价日志标签  ：user_profile/demodata/tags/day02/dsptags
+  *          4、读取移动数据：user_profile/demodata/tags/day02/cmcctags
+  *          5、消费商品退拒表:user_profile/demodata/tags/day02/usergoodstags
+  *          6、消费订单:user_profile/demodata/tags/day02/userordertags
+  **/
 
 
 object DemoTagsReader {

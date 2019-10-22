@@ -8,12 +8,11 @@ import org.apache.spark.sql.{Dataset, Row}
 
 
 /**
-  * @date: 2019/8/27
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 流量日志预处理程序
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 流量日志预处理程序
+ **/
 object EventLogPreprocess {
 
   def main(args: Array[String]): Unit = {

@@ -5,12 +5,11 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.types.{DataTypes, IntegerType, StructType}
 
 /**
- * @date: 2019/8/25
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  dataframe 基本操作
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: dataframe 基本操作
+ **/
 object DataFrameOperateDemo {
 
   def main(args: Array[String]): Unit = {

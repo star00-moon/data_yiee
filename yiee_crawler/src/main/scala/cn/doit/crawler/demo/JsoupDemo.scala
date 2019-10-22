@@ -13,10 +13,6 @@
 //import org.jsoup.select.Elements
 //
 ///**
-//  * @date: 2019/9/16
-//  * @site: www.doitedu.cn
-//  * @author: hunter.d 涛哥
-//  * @qq: 657270652
 //  * @description: Jsoup demo示例程序
 //  */
 //object JsoupDemo {

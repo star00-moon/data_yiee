@@ -6,12 +6,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * @date: 2019/9/15
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 各类源数据的id标识抽取程序
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 各类源数据的id标识抽取程序
+ **/
 object IdsExtractor {
 
   /**

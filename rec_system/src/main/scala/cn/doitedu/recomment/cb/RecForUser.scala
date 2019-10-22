@@ -1,12 +1,11 @@
 package cn.doitedu.recomment.cb
 
 /**
- * @date: 2019/9/27
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  根据用户评分UI矩阵，物品物品相似矩阵，做推荐
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 根据用户评分UI矩阵，物品物品相似矩阵，做推荐
+ **/
 object RecForUser {
 
   // 加载UI矩阵

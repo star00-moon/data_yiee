@@ -3,10 +3,11 @@ package cn.doitedu.commons.utils
 import java.io.File
 
 /**
-  * @author: 余辉
-  * @description: 描述
-  * @create: 2019-10-15 15:52
-  **/
+ * @author: 余辉 
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 删除文件目录及文件
+ **/
 object FileUtils {
 
   def deleteDir(dir: File): Unit = {

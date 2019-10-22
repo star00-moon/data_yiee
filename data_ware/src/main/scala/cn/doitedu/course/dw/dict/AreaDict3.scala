@@ -3,12 +3,11 @@ package cn.doitedu.course.dw.dict
 import cn.doitedu.commons.utils.SparkUtil
 
 /**
- * @date: 2019/8/25
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  地理位置字典构建程序、方案3实现代码
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 地理位置字典构建程序、方案3实现代码
+ **/
 
 case class Bean(id:String,areaName:String,pid:String,level:String,longitude:String,latitude:String)
 

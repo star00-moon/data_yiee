@@ -11,16 +11,15 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 /**
-  * @date: 2019/8/27
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
   * @description: 技能：在spark中请求web api
   *               将流量日志预处理时，
   *               解析不出省市区的gps坐标，
   *               去高德地图开放api上解析一波，
   *               并将结果加强到我们公司自己的字典中
-  */
+  **/
 object GpsDictEnhancer {
 
   def main(args: Array[String]): Unit = {
@@ -30,12 +29,12 @@ object GpsDictEnhancer {
     val toparse: DataFrame = spark.read.parquet("data_ware/data/toparse_gps/2019-06-16")
 
     // mappartitions的本质就是，task对一个分区调用一次你给的函数
-    val res: RDD[(String, String, String, String)] = toparse.rdd.mapPartitions(iter=>{
+    val res: RDD[(String, String, String, String)] = toparse.rdd.mapPartitions(iter => {
       // 先构造http客户端
       val client = HttpClientBuilder.create().build()
 
       // 然后再去逐行处理这个分区中的每条数据
-      val x: Iterator[(String, String, String, String)] = iter.map(row=>{
+      val x: Iterator[(String, String, String, String)] = iter.map(row => {
 
         val lng = row.getDouble(0)
         val lat = row.getDouble(1)

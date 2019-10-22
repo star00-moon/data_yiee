@@ -8,15 +8,14 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.types.{DataTypes, StructType}
 
 /**
-  * @date: 2019/9/12
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
   * @description: 利用idmapping（id映射字典）来对日志进行加工，为每条原始日志添加一个gid字段
-  *              1、得到idmapping（id映射字典）==》 idmapping
-  *              2、获取原始数据==》logDf
-  *              3、idmapping 关联 logDf 得到新数据
-  */
+  *               1、得到idmapping（id映射字典）==》 idmapping
+  *               2、获取原始数据==》logDf
+  *               3、idmapping 关联 logDf 得到新数据
+  **/
 object Demo1_2 {
   def main(args: Array[String]): Unit = {
     //1、建立Session import spark.implicits._

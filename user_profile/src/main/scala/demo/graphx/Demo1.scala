@@ -12,21 +12,11 @@ import cn.doitedu.commons.utils.FileUtils
 import scala.collection.immutable
 
 /**
-  * @date: 2019/9/12
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 图计算入门demo
-  *
-  *               步鄹：
-  *               1、建立session连接 import spark.implicits._
-  *               2、读取数据以及缓存起来
-  *               3、将数据描述成点集合(RDD[Vertex])
-  *               4、描述点和点之间的边集合(RDD[Edge])
-  *               5、用点集合和边集合，构造图数据模型Graph
-  *               6、在图数据模型上调一个算法：求最大连通子图(Graph)
-  *               7、整理结果
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 图计算入门demo
+ **/
 
 object Demo1 {
 
@@ -119,6 +109,7 @@ object Demo1 {
       * +-----------+--------------------------------------------------------+
       */
 
+    FileUtils.deleteDir(new File("user_profile/demodata/graphx/out_idmp"))
     idmapping.write.parquet("user_profile/demodata/graphx/out_idmp")
 
     spark.close()

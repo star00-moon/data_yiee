@@ -8,12 +8,11 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.jsoup.Jsoup
 
 /**
-  * @date: 2019/9/16
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 煎蛋网妹子图爬取
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 煎蛋网妹子图爬取
+ **/
 object JianDanPic {
 
   def main(args: Array[String]): Unit = {

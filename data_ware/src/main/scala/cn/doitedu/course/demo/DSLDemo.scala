@@ -7,16 +7,16 @@ import org.apache.spark.sql.expressions.Window
 
 
 /**
-  * @date: 2019/8/28
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
   * @description: DSL ： 特定领域语言
   *               (将sql语法中的关键字和sql函数，在程序中像调程序的方法一样调用）
-  */
+  **/
 
-case class Person(id:Int,name:String)
-case class Student(id:Int,name:String,age:Int)
+case class Person(id: Int, name: String)
+
+case class Student(id: Int, name: String, age: Int)
 
 
 object DSLDemo {
@@ -152,48 +152,46 @@ object DSLDemo {
 
     // 用纯DSL风格来写
     val window = Window.partitionBy('gender).orderBy('score.desc)
-    df.select('id,'name,'gender,'score,row_number().over(window).as("rn"))
-        .where('rn === 1)
-        .show(10,false)
+    df.select('id, 'name, 'gender, 'score, row_number().over(window).as("rn"))
+      .where('rn === 1)
+      .show(10, false)
 
 
     /**
       * DSL风格的join
       */
-    val stu = spark.read.option("header","true").csv("data_ware/demodata/stu.txt")
+    val stu = spark.read.option("header", "true").csv("data_ware/demodata/stu.txt")
 
     // 笛卡尔积
     df.crossJoin(stu)
-        .show(10,false)
+      .show(10, false)
 
 
     // 最基本的join条件写法，用usingColumn="列名"，表示： 左表的该列=右表的该列
     // 连接字段在结果中只保留一列
-    df.join(stu,"id")
-        .show(10,false)
+    df.join(stu, "id")
+      .show(10, false)
 
     // 左右表的连接字段在结果中都会出现
-    df.join(stu.withColumnRenamed("id","id2"),df("id") === stu("stuid"))
-        .show(10,false)
+    df.join(stu.withColumnRenamed("id", "id2"), df("id") === stu("stuid"))
+      .show(10, false)
 
 
     // 指定多个连接列，并指定连接类型：左连接 left，右连接right，内连接inner，全外连接full ,left semi左半连接
-    df.join(stu,Seq("id"),"left")
-        .show(10,false)
+    df.join(stu, Seq("id"), "left")
+      .show(10, false)
 
     /**
-      *  JoinWith ，是针对dataset的特定join，可以保留dataset中原有的数据类型
+      * JoinWith ，是针对dataset的特定join，可以保留dataset中原有的数据类型
       */
-    val ds1 = spark.createDataset(Seq(Person(1,"zs"),Person(2,"ls")))
-    val ds2 = spark.createDataset(Seq(Student(1,"zs",28),Student(2,"ls",35)))
+    val ds1 = spark.createDataset(Seq(Person(1, "zs"), Person(2, "ls")))
+    val ds2 = spark.createDataset(Seq(Student(1, "zs", 28), Student(2, "ls", 35)))
 
     // 仔细对照下面两句话，你就能体会到join和joinwith的区别
-    val dsx: DataFrame = ds1.join(ds2,ds1("id") === ds2("id"))
-    val dsy: Dataset[(Person, Student)] = ds1.joinWith(ds2,ds1("id") === ds2("id"))
-    dsx.show(10,false)
-    dsy.show(10,false)
-
-
+    val dsx: DataFrame = ds1.join(ds2, ds1("id") === ds2("id"))
+    val dsy: Dataset[(Person, Student)] = ds1.joinWith(ds2, ds1("id") === ds2("id"))
+    dsx.show(10, false)
+    dsy.show(10, false)
 
 
     spark.close()

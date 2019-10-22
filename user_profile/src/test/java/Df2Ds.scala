@@ -3,12 +3,11 @@ import cn.doitedu.commons.utils.SparkUtil
 import org.apache.spark.sql.Dataset
 
 /**
- * @date: 2019/9/19
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  dataframe  转 dataset
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: dataframe  转 dataset
+ **/
 case class GoodsInfo(skuid:String,name:String,brand:String,c1:String,c2:String,c3:String)
 
 object Df2Ds {

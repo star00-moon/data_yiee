@@ -5,12 +5,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.HashMap;
 
 /**
- * @date: 2019/9/22
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  明细标签查询服务接口
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 明细标签查询服务接口
+ **/
 public interface ITagsQueryService {
 
     HashMap<String, HashMap<String,Double>> getTagsByGid(String gid,String date);

@@ -6,12 +6,11 @@ import cn.doitedu.commons.utils.DictsLoader._
 import org.apache.commons.lang3.{StringEscapeUtils, StringUtils}
 
 /**
-  * @date: 2019/9/15
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: DSP竞价日志预处理 ，参考 4.5.2.	DSP数据字段说明
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: DSP竞价日志预处理 ，参考 4.5.2.	DSP数据字段说明
+ **/
 object DspLogPre {
 
   def main(args: Array[String]): Unit = {

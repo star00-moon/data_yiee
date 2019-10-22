@@ -7,12 +7,11 @@ import com.hankcs.hanlp.seg.common.Term;
 import java.util.List;
 
 /**
- * @date: 2019/9/16
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description: HanLp自然语言处理工具包应用示例
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description:  HanLp自然语言处理工具包应用示例
+ **/
 
 public class HanLpDemo {
     public static void main(String[] args) {

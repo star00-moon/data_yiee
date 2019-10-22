@@ -11,12 +11,11 @@ import org.apache.commons.lang3.StringUtils
 
 
 /**
-  * @date: 2019/9/16
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: 公司商城系统用户行为事件日志预处理
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 公司商城系统用户行为事件日志预处理
+ **/
 object EventLogPre {
 
   def main(args: Array[String]): Unit = {

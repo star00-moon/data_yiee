@@ -9,12 +9,11 @@ import org.apache.spark.rdd.RDD
 
 
 /**
-  * @date: 2019/9/15
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
-  * @description: T日IDMP计算程序
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: T日IDMP计算程序
+ **/
 object TdayIdmp {
 
   def main(args: Array[String]): Unit = {

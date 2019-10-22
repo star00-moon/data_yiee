@@ -59,7 +59,7 @@ object ProfileTags2Hbase {
     // 3-2、设置输出hbase的表
     conf.set(TableOutputFormat.OUTPUT_TABLE, "profile_tags")
     // 3-3、hdfs默認文件
-    conf.set("fs.defaultFS", "hdfs://hadoop11:8020/")
+    conf.set("fs.defaultFS", "hdfs://hadoop11:9000/")
 
     // 4、指定的其实就是rowkey类型
     val job = Job.getInstance(conf)
@@ -95,7 +95,7 @@ object ProfileTags2Hbase {
       })
 
     // 将RDD[(K,V)]利用HFileOutputFormat2存储为HFile文件
-    kvRdd.saveAsNewAPIHadoopFile("hdfs://doit01:8020/tmp/taghfile/2019-06-16",
+    kvRdd.saveAsNewAPIHadoopFile("hdfs://hadoop11:9000/tmp/taghfile/2019-06-16",
       classOf[ImmutableBytesWritable],
       classOf[KeyValue],
       classOf[HFileOutputFormat2],
@@ -113,7 +113,7 @@ object ProfileTags2Hbase {
     val locator = conn.getRegionLocator(TableName.valueOf("profile_tags"))
 
     val loader = new LoadIncrementalHFiles(conf)
-    loader.doBulkLoad(new Path(("hdfs://hadoop11:8020/tmp/taghfile/2019-06-16")), admin, table, locator)
+    loader.doBulkLoad(new Path(("hdfs://hadoop11:9000/tmp/taghfile/2019-06-16")), admin, table, locator)
 
     println("恭喜你，hfile数据导入完成，你可以去hbase上查询数据了 -----------------------")
   }

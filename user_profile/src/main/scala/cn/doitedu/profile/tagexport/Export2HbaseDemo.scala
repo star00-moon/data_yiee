@@ -10,14 +10,13 @@ import org.apache.hadoop.hbase.{HBaseConfiguration, KeyValue, TableName}
 import org.apache.hadoop.mapreduce.Job
 
 /**
-  * @date: 2019/8/10
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
   * @description: 将任意数据通过bulkloader导入hbase的模板程序
   *               测试之前，要在hbase中建表：
   *               hbase(main):017:0> create 'x','f'
-  */
+  **/
 object Export2HbaseDemo {
 
   def main(args: Array[String]): Unit = {

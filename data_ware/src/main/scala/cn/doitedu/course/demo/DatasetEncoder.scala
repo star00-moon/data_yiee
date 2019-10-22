@@ -7,13 +7,11 @@ import scala.collection.mutable
 
 
 /**
- * @date: 2019/8/30
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:
-  *  spark dataset中encoder问题
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: spark dataset中encoder问题
+ **/
 object DatasetEncoder {
 
   def main(args: Array[String]): Unit = {

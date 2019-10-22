@@ -5,12 +5,11 @@ import java.io.{BufferedWriter, FileWriter}
 import org.jsoup.Jsoup
 
 /**
-  * @date: 2019/9/18
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652 京东葡萄酒类商品信息抓取程序，保存【商品标题】和【商品详情页地址】
-  * @description:
-  */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: 京东葡萄酒类商品信息抓取程序，保存【商品标题】和【商品详情页地址】
+ **/
 object JingDongGoods {
   def main(args: Array[String]): Unit = {
     fetchGoodsBaseInfo("yiee_crawler/data/jdgoods/goods.jd")

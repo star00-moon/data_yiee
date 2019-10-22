@@ -4,12 +4,11 @@ import cn.doitedu.commons.utils.SparkUtil
 import org.apache.spark.rdd.RDD
 
 /**
- * @date: 2019/8/25
- * @site: www.doitedu.cn
- * @author: hunter.d 涛哥
- * @qq: 657270652
- * @description:  RDD的基本操作入门
- */
+ * @author: 余辉
+ * @blog:   https://blog.csdn.net/silentwolfyh
+ * @create: 2019/10/22
+ * @description: RDD的基本操作入门
+ **/
 object RddOperatorDemo {
 
   def main(args: Array[String]): Unit = {

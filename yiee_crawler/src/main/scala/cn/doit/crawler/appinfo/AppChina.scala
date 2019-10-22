@@ -7,10 +7,9 @@ import org.jsoup.Jsoup
 import scala.io.Source
 
 /**
-  * @date: 2019/9/18
-  * @site: www.doitedu.cn
-  * @author: hunter.d 涛哥
-  * @qq: 657270652
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
   * @description: appchina应用下载市场app信息爬取程序
   *
   *               appchina也有一定的反爬措施：
@@ -19,18 +18,19 @@ import scala.io.Source
   *               应对措施：设置useragent；
   *               不断更换代理服务器；
   *               适当降低请求频率；
-  */
+  **/
 object AppChina {
 
   def main(args: Array[String]): Unit = {
 
-//    getAppDtlUrls("yiee_crawler/data/appchina-dtlurls/dtl.urls")
+    //    getAppDtlUrls("yiee_crawler/data/appchina-dtlurls/dtl.urls")
     getAppDesc("yiee_crawler/data/appchina-dtlurls/dtl.urls", "yiee_crawler/data/appdesc/app.desc")
 
   }
 
-  /***
+  /** *
     * 获取网页中的  appid appname appDtlUrl 保存到yiee_crawler/data/appchina-dtlurls/dtl.urls
+    *
     * @param urlSavePath
     */
   def getAppDtlUrls(urlSavePath: String) = {
@@ -83,8 +83,9 @@ object AppChina {
   }
 
 
-  /***
+  /** *
     * 根据获取app清单，分别获取每个详细的app应用数据，保存数据为：app的id ， app名称 ， app相信信息
+    *
     * @param dtlUrls
     * @param resultSavePath
     */
@@ -107,7 +108,7 @@ object AppChina {
       val arr = line.split("\001")
       val url = arr(2)
       import scala.collection.JavaConversions._
-      val doc = Jsoup.connect(s"http://www.appchina.com${url}").headers(headers).execute().parse()  //http://www.appchina.com/app/com.vpgame.eric
+      val doc = Jsoup.connect(s"http://www.appchina.com${url}").headers(headers).execute().parse() //http://www.appchina.com/app/com.vpgame.eric
 
       // 提取app描述信息
       val p = doc.getElementsByClass("art-content").get(0)
