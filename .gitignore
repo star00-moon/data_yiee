@@ -1,0 +1,8 @@
+data_ware/target/
+rec_system/target/
+user_profile/target/
+yiee_commons/target/
+yiee_crawler/target/
+data_service/target/
+spark-warehouse
+.idea/*

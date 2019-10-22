@@ -1,0 +1,15 @@
+uid,sid,step,url,ref
+u01,s01,1,X
+u01,s01,2,Y,X
+u01,s01,3,A,Y
+u01,s01,4,B,A
+u01,s01,5,C,B
+u01,s01,6,B,C
+u01,s01,7,O,B
+u02,s02,1,A
+u02,s02,2,C,A
+u02,s02,3,A,C
+u02,s02,4,B,A
+u02,s02,5,D
+u02,s02,6,B,D
+u02,s02,7,C,B

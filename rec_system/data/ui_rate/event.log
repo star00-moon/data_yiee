@@ -1,0 +1,16 @@
+{"gid":"gid08","event_type":"pv","event":{"pid":"p01"}}
+{"gid":"gid08","event_type":"pv","event":{"pid":"p01"}}
+{"gid":"gid01","event_type":"pv","event":{"pid":"p01"}}
+{"gid":"gid01","event_type":"add_cart","event":{"pid":"p01"}}
+{"gid":"gid01","event_type":"pv","event":{"pid":"p02"}}
+{"gid":"gid01","event_type":"rate","event":{"pid":"p01","score":4}}
+{"gid":"gid01","event_type":"rate","event":{"pid":"p02","score":2}}
+{"gid":"gid02","event_type":"pv","event":{"pid":"p02"}}
+{"gid":"gid02","event_type":"pv","event":{"pid":"p02"}}
+{"gid":"gid02","event_type":"pv","event":{"pid":"p01"}}
+{"gid":"gid02","event_type":"add_cart","event":{"pid":"p03"}}
+{"gid":"gid02","event_type":"add_cart","event":{"pid":"p01"}}
+{"gid":"gid03","event_type":"pv","event":{"pid":"p02"}}
+{"gid":"gid03","event_type":"pv","event":{"pid":"p04"}}
+{"gid":"gid03","event_type":"pv","event":{"pid":"p04"}}
+{"gid":"gid03","event_type":"add_cart","event":{"pid":"p05"}}
