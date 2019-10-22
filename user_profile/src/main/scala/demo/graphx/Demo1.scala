@@ -58,7 +58,7 @@ object Demo1 {
       val wx = row.getAs[String]("wx")
 
       val ids = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))
-      //Edge （边）:A single directed edge consisting of a source id, target id, and the data associated with the edge.
+      // 4-1 Edge （边）: 来源id-->目标id,第一条边（phone--->name）,第二条边（phone--->wx）
       for (i <- 1 until ids.size) yield Edge(ids(0).hashCode.toLong, ids(i).hashCode.toLong, "")
     })
 

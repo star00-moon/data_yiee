@@ -2,7 +2,9 @@
 注意：标记为数字的是类名称，空心点的是类所需要加载的数据
 
 ### 第一天
+1. cn.doitedu.commons.utils.FileUtils  【yiee_commons】删除文件目录及文件
 1. demo.graphx.Demo1    图计算入门demo
+    - user_profile/demodata/graphx/input/demo1.dat
 2. demo.graphx.Demo1_2  利用idmapping（id映射字典）来对日志进行加工，为每条日志添加一个gid字段
     - user_profile/demodata/graphx/input    图计算日志
 
