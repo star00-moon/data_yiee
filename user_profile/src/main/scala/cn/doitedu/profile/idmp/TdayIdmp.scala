@@ -42,13 +42,15 @@ object TdayIdmp {
       arr.map(strId => (strId.hashCode.toLong, strId))
     })
 
-    // 6、映射边集合 edges
+    // 6、映射边集合 edges ， 每行数据两两直接都要建立边，所以需要双层for循环
     val edges: RDD[Edge[String]] = ids.flatMap(arr => {
       val sortedArr = arr.sorted
       for (i <- 0 until sortedArr.size - 1; j <- i + 1 until sortedArr.size) yield {
-        Edge(sortedArr(i).hashCode.toLong, sortedArr(j).hashCode.toLong, "")
+        Edge(sortedArr(i).hashCode.toLong, sortedArr(j).hashCode.toLong, sortedArr(i)+"--》"+sortedArr(j))
       }
     })
+
+    edges.foreach(println)
 
     // 7、过滤出现次数<阈值的边 , 相同边出现两次的过滤
     val filteredEdges = edges.map(edge => (edge, 1)).reduceByKey(_ + _).filter(_._2 > 2).map(_._1)
@@ -68,7 +70,6 @@ object TdayIdmp {
     result.toDF("id", "gid")
 
     spark.close()
-
   }
 
 }
