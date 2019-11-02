@@ -1,8 +1,12 @@
 data_ware/target/
 rec_system/target/
 user_profile/target/
+user_profile/data/output
+user_profile/demodata/graphx/out_gidlog
+user_profile/demodata/graphx/out_idmp
 yiee_commons/target/
 yiee_crawler/target/
 data_service/target/
 spark-warehouse
 .idea/*
+.gitignore
