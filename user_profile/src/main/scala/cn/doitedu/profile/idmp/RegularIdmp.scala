@@ -9,11 +9,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
 /**
- * @author: 余辉
- * @blog:   https://blog.csdn.net/silentwolfyh
- * @create: 2019/10/22
- * @description: 常规的id映射字典计算程序
- **/
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
+  * @description: 常规的id映射字典计算程序
+  **/
 object RegularIdmp {
 
   def main(args: Array[String]): Unit = {
@@ -22,32 +22,33 @@ object RegularIdmp {
     val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
-    //2、定义处理数据路径 cmccLogPath dspLogPath eventLogPath
-    /*val cmccLogPath = "user_profile/demodata/idmp/input/day02/cmcclog"
+    //2、定义处理数据路径 cmccLogPath dspLogPath eventLogPath 以及 抽取当日的各类数据的id标识数据
+    // 2-1、测试数据
+    val cmccLogPath = "user_profile/demodata/idmp/input/day02/cmcclog"
     val dspLogPath = "user_profile/demodata/idmp/input/day02/dsplog"
-    val eventLogPath = "user_profile/demodata/idmp/input/day02/eventlog"*/
-    val cmccLogPath = "user_profile/data/cmcclog/day01"
-    val dspLogPath = "user_profile/data/dsplog/day01"
-    val eventLogPath = "user_profile/data/eventlog/day01"
+    val eventLogPath = "user_profile/demodata/idmp/input/day02/eventlog"
+    val cmccIds = IdsExtractor.extractDemoCmccLogIds(spark, cmccLogPath)
+    val dspIds = IdsExtractor.extractDemoDspLogIds(spark, dspLogPath)
+    val eventIds = IdsExtractor.extractDemoEventLogIds(spark, eventLogPath)
 
-    // 3、抽取当日的各类数据的id标识数据
-    /*val cmccIds = IdsExtractor.extractDemoCmccLogIds(spark,cmccLogPath)
-    val dspIds = IdsExtractor.extractDemoDspLogIds(spark,dspLogPath)
-    val eventIds = IdsExtractor.extractDemoEventLogIds(spark,eventLogPath)*/
-    val cmccIds = IdsExtractor.extractCmccLogIds(spark, cmccLogPath)
-    val dspIds = IdsExtractor.extractDspLogIds(spark, dspLogPath)
-    val eventIds = IdsExtractor.extractEventLogIds(spark, eventLogPath)
+    // 2-1、真实数据
+    //    val cmccLogPath = "user_profile/data/cmcclog/day01"
+    //    val dspLogPath = "user_profile/data/dsplog/day01"
+    //    val eventLogPath = "user_profile/data/eventlog/day01"
+    //    val cmccIds = IdsExtractor.extractCmccLogIds(spark, cmccLogPath)
+    //    val dspIds = IdsExtractor.extractDspLogIds(spark, dspLogPath)
+    //    val eventIds = IdsExtractor.extractEventLogIds(spark, eventLogPath)
 
-    // 4、查询cmccIds、dspIds、eventIds的并集
+    // 3、查询cmccIds、dspIds、eventIds的并集
     // union是返回两个数据集的并集，不包括重复行，要求列数要一样，类型可以不同
     val ids = cmccIds.union(dspIds).union(eventIds)
 
-    // 5、映射点集合
+    // 4、映射点集合
     val vertices: RDD[(Long, String)] = ids.flatMap(arr => {
       arr.map(strId => (strId.hashCode.toLong, strId))
     })
 
-    // 6、 映射边集合
+    // 5、 映射边集合
     val edges: RDD[Edge[String]] = ids.flatMap(arr => {
       val sortedArr = arr.sorted
       for (i <- 0 until sortedArr.size - 1; j <- i + 1 until sortedArr.size) yield {
@@ -55,10 +56,10 @@ object RegularIdmp {
       }
     })
 
-    // 7、过滤出现次数<阈值的边
+    // 6、过滤出现次数<阈值的边
     val filteredEdges = edges.map(edge => (edge, 1)).reduceByKey(_ + _).filter(_._2 > 0).map(_._1)
 
-    //  8、加载上日的idmapping数据
+    //  7、加载上日的idmapping数据
     val idmpDF = spark.read.parquet("user_profile/demodata/idmp/output/day01")
 
     // 8、将上日的idmp数据也映射成点集合和边集合
@@ -83,7 +84,7 @@ object RegularIdmp {
 
     // 11、利用上日idmap调整当日计算结果
     val ajustedResult: RDD[(VertexId, VertexId)] = currentDayResult
-      // 11-1、按今日gid分组
+      // 11-1、按今日gid分组 ,分组之后变为（gid,(id1,id2,id3 。。。 )）
       .groupBy(_._2)
       .flatMap(tp => {
         // 11-2、取到一组ids的今日计算结果gid
@@ -99,24 +100,20 @@ object RegularIdmp {
         // 11-5、取历史idset和今日这一组idset的交集
         val sharedIds = idSet.intersect(historyIdSet)
 
-        //  11-6、如果存在交集
+        //  11-6、如果存在交集，则取历史的gid作为当日这组ids的gid
         if (sharedIds != null && sharedIds.size > 0) {
-          //  11-7、取历史的gid作为当日这组ids的gid
           gid = idmpLastDay.get(sharedIds.head).get
         }
 
-        // 11-8、再返回这一组结果
+        // 11-7、再返回这一组结果
         idSet.map(id => (id, gid))
 
       })
 
-    // 11-9、输出保存最终结果
+    // 12、输出保存最终结果
     FileUtils.deleteDir(new File("user_profile/data/output/idmp/day01"))
     ajustedResult.toDF("id", "gid").coalesce(1).write.parquet("user_profile/data/output/idmp/day01")
-
     ajustedResult.toDF("id", "gid").show(100, false)
-
     spark.close()
   }
-
 }
