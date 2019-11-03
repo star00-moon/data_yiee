@@ -20,7 +20,6 @@
     - user_profile/data/dsplog/day01
     - user_profile/data/eventlog/day01
 1. cn.doitedu.commons.utils.EventJson2Bean      【yiee_commons】事件日志json转成EventLogBean
-1. cn.doit.crawler.demo.HttpClientDemo          【yiee_crawler】用于理解啥叫爬虫
 1. cn.doitedu.profile.preprocess.DspLogPre      DSP竞价日志预处理
     - user_profile/data/dsplog/day01  加载原始数据
     - user_profile/data/appdict 加载app信息字典

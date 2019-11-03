@@ -2,19 +2,20 @@ package cn.doitedu.profile.tagextract
 
 import cn.doitedu.commons.utils.SparkUtil
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 
 /**
   * @author: 余辉
   * @blog: https://blog.csdn.net/silentwolfyh
   * @create: 2019/10/22
-  *          1、提取各个标签，返回：gid，模块，便签，值，权重
-  *          2、读取Event标签 ： user_profile/demodata/tags/day02/eventtags
-  *          3、读取竞价日志标签  ：user_profile/demodata/tags/day02/dsptags
-  *          4、读取移动数据：user_profile/demodata/tags/day02/cmcctags
-  *          5、消费商品退拒表:user_profile/demodata/tags/day02/usergoodstags
-  *          6、消费订单:user_profile/demodata/tags/day02/userordertags
+  *          1、提取各个标签，返回：gid，模块【tag_module】，便签【tag_name】，值【tag_value】，权重【weight】
+  *          2、gid的返回类型为 Long，权重的返回类型为 Double
+  *          3、读取Event标签 ： user_profile/demodata/tags/day02/eventtags
+  *          4、读取竞价日志标签  ：user_profile/demodata/tags/day02/dsptags
+  *          5、读取移动数据：user_profile/demodata/tags/day02/cmcctags
+  *          6、消费商品退拒表:user_profile/demodata/tags/day02/usergoodstags
+  *          7、消费订单:user_profile/demodata/tags/day02/userordertags
   **/
 
 
