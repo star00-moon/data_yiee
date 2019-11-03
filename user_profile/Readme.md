@@ -9,7 +9,7 @@
     - user_profile/demodata/graphx/input    图计算日志
 
 ### 第二天
-1. cn.doitedu.profile.idmp.TdayIdmp      T日IDMP计算程序     [????  映射边集合 edges]
+1. cn.doitedu.profile.idmp.TdayIdmp      T日IDMP计算程序    
     - user_profile/demodata/idmp/input/day01/cmcclog
     - user_profile/demodata/idmp/input/day01/dsplog
     - user_profile/demodata/idmp/input/day01/eventlog

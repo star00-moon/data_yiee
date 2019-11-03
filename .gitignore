@@ -4,6 +4,7 @@ user_profile/target/
 user_profile/data/output
 user_profile/demodata/graphx/out_gidlog
 user_profile/demodata/graphx/out_idmp
+user_profile/demodata/idmp/output
 yiee_commons/target/
 yiee_crawler/target/
 data_service/target/

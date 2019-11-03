@@ -60,7 +60,7 @@ object DspLogPre {
         val areaDict = bcArea.value
         val idmpDict = bcIdmap.value
 
-        // 6-4、定义好要追加集成的字段
+        // 6-4、定义好要追加集成的字段,[provincename,cityname,district,appname,appDesc,gid]
         var province = bean.provincename
         var city = bean.cityname
         var district = bean.district
