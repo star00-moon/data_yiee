@@ -5,6 +5,8 @@ import java.io.File
 import cn.doitedu.commons.utils.{FileUtils, SparkUtil}
 import org.apache.commons.lang3.StringUtils
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.types.{DataTypes, StructType}
 
 /**
@@ -20,46 +22,46 @@ object Demo1_2 {
   def main(args: Array[String]): Unit = {
     //1、建立Session import spark.implicits._
     Logger.getLogger("org").setLevel(Level.WARN)
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
     // 2、加载idmapping字典 "user_profile/demodata/graphx/out_idmp"，字段为 id，gid ,变成tpule2
-    val idmapping = spark
+    val idmapping: collection.Map[String, Long] = spark
       .read
       .parquet("user_profile/demodata/graphx/out_idmp")
       .rdd
       .map(row => {
-        val gid = row.getAs[Long]("gid")
-        val id = row.getAs[String]("id")
+        val gid: Long = row.getAs[Long]("gid")
+        val id: String = row.getAs[String]("id")
         (id, gid)
       }).collectAsMap()
 
     // 3、idmapping 加载到广播变量
-    val bc = spark.sparkContext.broadcast(idmapping)
+    val bc: Broadcast[collection.Map[String, Long]] = spark.sparkContext.broadcast(idmapping)
 
     //4、创建原始数据的schema
-    val schema = new StructType()
+    val schema: StructType = new StructType()
       .add("phone", DataTypes.StringType)
       .add("name", DataTypes.StringType)
       .add("wx", DataTypes.StringType)
       .add("income", DataTypes.IntegerType)
 
     // 5、加载日志数据 schema + 原始日志
-    val logDf = spark.read.schema(schema).option("header", true).csv("user_profile/demodata/graphx/input/demo1.dat")
+    val logDf: DataFrame = spark.read.schema(schema).option("header", true).csv("user_profile/demodata/graphx/input/demo1.dat")
     logDf.printSchema()
 
     //6、日志转为DataFrame, idmapping 关联 logDf 得到新数据
-    val gidLogDF = logDf.rdd.map(row => {
+    val gidLogDF: DataFrame = logDf.rdd.map(row => {
       // 6-1、从广播变量中取出id映射字典
       val idmp: collection.Map[String, Long] = bc.value
 
-      val phone = row.getAs[String]("phone")
-      val name = row.getAs[String]("name")
-      val wx = row.getAs[String]("wx")
-      val income = row.getAs[Int]("income")
+      val phone: String = row.getAs[String]("phone")
+      val name: String = row.getAs[String]("name")
+      val wx: String = row.getAs[String]("wx")
+      val income: Int = row.getAs[Int]("income")
 
-      val notNullId = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))(0)
-      val gidOption = idmp.get(notNullId)
+      val notNullId: String = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))(0)
+      val gidOption: Option[Long] = idmp.get(notNullId)
       var gid: String = "未知"
       if (gidOption.isDefined) gid = gidOption.get + ""
 

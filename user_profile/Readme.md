@@ -2,10 +2,11 @@
 注意：标记为数字的是类名称，空心点的是类所需要加载的数据
 
 ### 第一天
-1. cn.doitedu.commons.utils.FileUtils  【yiee_commons】删除文件目录及文件
 1. demo.graphx.Demo1    图计算入门demo
     - user_profile/demodata/graphx/input/demo1.dat
-2. demo.graphx.Demo1_2  利用idmapping（id映射字典）来对日志进行加工，为每条日志添加一个gid字段
+2. cn.doitedu.commons.utils.FileUtils           【yiee_commons】删除文件目录 及 目录下面的文件
+3. cn.doitedu.commons.utils.ShowFiles           【yiee_commons】查看文件内容
+4. demo.graphx.Demo1_2  利用idmapping（id映射字典）来对日志进行加工，为每条日志添加一个gid字段
     - user_profile/demodata/graphx/input    图计算日志
 
 ### 第二天
@@ -14,7 +15,6 @@
     - user_profile/demodata/idmp/input/day01/dsplog
     - user_profile/demodata/idmp/input/day01/eventlog
 1. cn.doitedu.commons.utils.IdsExtractor        【yiee_commons】各类源数据的id标识抽取程序    
-1. cn.doitedu.commons.utils.ShowParquet         【yiee_commons】查看Parquet格式文件类
 1. cn.doitedu.profile.idmp.RegularIdmp          常规的id映射字典计算程序
     - user_profile/data/cmcclog/day01
     - user_profile/data/dsplog/day01
@@ -98,33 +98,3 @@
 ### 页面
 1. static/echarts.min.js
 2. static/index.html
-
-
-## 日志数据说明
-1. user_profile/data/appdict        //appdict字典数据
-1. user_profile/data/areadict       //地域字典数据
-1. user_profile/data/cmcclog        //移动运行商数据
-1. user_profile/data/dsplog         //dsp日志
-1. user_profile/data/eventlog       //
-1. user_profile/data/idmpdict
-1. user_profile/data/modeltags/lossprob/modeltag_sample
-1. user_profile/data/modeltags/lossprob/modeltag_test
-1. user_profile/data/t_ads_user_order_tag
-1. user_profile/data/t_user_goods
-2. user_profile/demodata/graphx/input      //graphx图数据
-2. user_profile/demodata/idmp/input/day01/cmcclog/day01  用户画像-数据源说明-运营商流量日志
-2. user_profile/demodata/idmp/input/day01/dsplog
-2. user_profile/demodata/idmp/input/day01/eventlog
-2. user_profile/demodata/idmp/input/day02/cmcclog       demo数据
-2. user_profile/demodata/idmp/input/day02/dsplog        demo数据
-2. user_profile/demodata/idmp/input/day02/eventlog      demo数据
-2. user_profile/demodata/tags/day01/cmcctags        //移动运行商标签数据
-2. user_profile/demodata/tags/day01/dsptags
-2. user_profile/demodata/tags/day01/eventtags
-2. user_profile/demodata/tags/day01/usergoodstags
-2. user_profile/demodata/tags/day01/userordertags
-2. user_profile/demodata/tags/day02/cmcctags
-2. user_profile/demodata/tags/day02/dsptags
-2. user_profile/demodata/tags/day02/eventtags
-2. user_profile/demodata/tags/day02/usergoodstags
-2. user_profile/demodata/tags/day02/userordertags

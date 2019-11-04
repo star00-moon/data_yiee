@@ -4,19 +4,19 @@ import java.io.File
 
 import cn.doitedu.commons.utils.SparkUtil
 import org.apache.commons.lang3.{StringEscapeUtils, StringUtils}
-import org.apache.spark.graphx.{Edge, Graph, VertexId}
+import org.apache.spark.graphx.{Edge, Graph, VertexId, VertexRDD}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import cn.doitedu.commons.utils.FileUtils
 
 import scala.collection.immutable
 
 /**
- * @author: 余辉
- * @blog:   https://blog.csdn.net/silentwolfyh
- * @create: 2019/10/22
- * @description: 图计算入门demo
- **/
+  * @author: 余辉
+  * @blog: https://blog.csdn.net/silentwolfyh
+  * @create: 2019/10/22
+  * @description: 图计算入门demo
+  **/
 
 object Demo1 {
 
@@ -53,11 +53,11 @@ object Demo1 {
     // 4、描述点和点之间的边edges,val edges: RDD[Edge[String]]
     val edges: RDD[Edge[String]] = df.rdd.flatMap(row => {
 
-      val phone = row.getAs[String]("phone")
-      val name = row.getAs[String]("name")
-      val wx = row.getAs[String]("wx")
+      val phone: String = row.getAs[String]("phone")
+      val name: String = row.getAs[String]("name")
+      val wx: String = row.getAs[String]("wx")
 
-      val ids = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))
+      val ids: Array[String] = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))
       // 4-1 Edge （边）: 来源id-->目标id,第一条边（phone--->name）,第二条边（phone--->wx）
       for (i <- 1 until ids.size) yield Edge(ids(0).hashCode.toLong, ids(i).hashCode.toLong, "")
     })
@@ -65,29 +65,29 @@ object Demo1 {
     // 5、用点集合和边集合，构造图数据模型Graph
     val graph = Graph(vertcies, edges)
 
-    // 6、在图数据模型上调一个算法：求最大连通子图(Graph)
+    // 6、求最大连通子图(Graph),获取所有顶点
     val value: Graph[VertexId, String] = graph.connectedComponents()
-    val connected = value.vertices
+    val connected: VertexRDD[VertexId] = value.vertices
     connected.take(20).foreach(println)
     //(-1095633001,-1095633001)
     // (29003441,-1095633001)
     // (113568560,-1485777898)
     // (113568358,-1095633001)
-    // 7、整理结果
-    // gid -> 标识1,标识2,标识3,.....
-    // gid -> 标识1,标识2,标识3,.....
 
-    val resDF = vertcies.join(connected) // (38771171,("马德华",-1095633001))
+    // 7、整理结果为gid-> id，且保存结果
+    val resDF: DataFrame = vertcies.join(connected) // (38771171,("马德华",-1095633001))
       .map(tp => (tp._2._2, tp._2._1))
       .toDF("gid", "id")
-    resDF.createTempView("res")
 
     FileUtils.deleteDir(new File("user_profile/demodata/graphx/out_idmp"))
     resDF.coalesce(1).distinct().write.parquet("user_profile/demodata/graphx/out_idmp")
     sys.exit(1) // TODO
 
-    //8、查询 结果为 idmapping  ： select gid,collect_set(id) as ids from res group by gid
-    val idmapping = spark.sql(
+    // 8、resDF注册临时表，便于查询结果，【备注：下面步骤 可选操作】
+    resDF.createTempView("res")
+
+    // 9、查询 结果为 idmapping  ： select gid,collect_set(id) as ids from res group by gid
+    val idmapping: DataFrame = spark.sql(
       """
         |
         |select
@@ -109,9 +109,11 @@ object Demo1 {
       * +-----------+--------------------------------------------------------+
       */
 
+    // 10、 保存结果
     FileUtils.deleteDir(new File("user_profile/demodata/graphx/out_idmp"))
     idmapping.write.parquet("user_profile/demodata/graphx/out_idmp")
 
+    // 11、 关闭spark
     spark.close()
   }
 }
