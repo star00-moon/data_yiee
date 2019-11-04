@@ -21,16 +21,15 @@ import org.apache.spark.sql.types.{DataTypes, StructType}
 object Demo1_2 {
   def main(args: Array[String]): Unit = {
     //1、建立Session import spark.implicits._
-    Logger.getLogger("org").setLevel(Level.WARN)
-    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getTypeName)
     import spark.implicits._
 
     // 2、加载idmapping字典【gid为Long类型，id为String类型】, 通过Tuple2转为Map集合
-    val idmapping: collection.Map[String, Long] = spark
-      .read
-      .parquet("user_profile/demodata/graphx/out_idmp")
-      .rdd
-      .map(row => {
+    val idmapping: collection.Map[String, Long] =
+      spark
+        .read
+        .parquet("user_profile/demodata/graphx/out_idmp")
+        .rdd.map(row => {
         val gid: Long = row.getAs[Long]("gid")
         val id: String = row.getAs[String]("id")
         (id, gid)
@@ -62,7 +61,7 @@ object Demo1_2 {
       val income: Int = row.getAs[Int]("income")
 
       // 6-3、判空且获取第一个值
-      val notNullId: String = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))(0)
+      val notNullId: String = Array(phone, name, wx).filter(StringUtils.isNoneBlank(_))(0)
 
       // 6-4、在广播变量中获取gid
       val gidOption: Option[Long] = idmp.get(notNullId)
