@@ -25,7 +25,7 @@ object Demo1_2 {
     val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
-    // 2、加载idmapping字典 "user_profile/demodata/graphx/out_idmp"，字段为 id，gid ,变成tpule2
+    // 2、加载idmapping字典【gid为Long类型，id为String类型】, 通过Tuple2转为Map集合
     val idmapping: collection.Map[String, Long] = spark
       .read
       .parquet("user_profile/demodata/graphx/out_idmp")
@@ -55,13 +55,19 @@ object Demo1_2 {
       // 6-1、从广播变量中取出id映射字典
       val idmp: collection.Map[String, Long] = bc.value
 
+      // 6-2、获取原始日志中：phone、name、wx、income
       val phone: String = row.getAs[String]("phone")
       val name: String = row.getAs[String]("name")
       val wx: String = row.getAs[String]("wx")
       val income: Int = row.getAs[Int]("income")
 
+      // 6-3、判空且获取第一个值
       val notNullId: String = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))(0)
+
+      // 6-4、在广播变量中获取gid
       val gidOption: Option[Long] = idmp.get(notNullId)
+
+      // 6-5、如果没有值则取  "未知"，有值则保留
       var gid: String = "未知"
       if (gidOption.isDefined) gid = gidOption.get + ""
 
