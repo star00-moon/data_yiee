@@ -15,7 +15,7 @@ object DspLogPre {
 
   def main(args: Array[String]): Unit = {
 
-    // 1、建立session连接  import spark.implicits._
+    // 1、建立session连接
     val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
@@ -41,7 +41,7 @@ object DspLogPre {
         line.split(",", -1)
       })
       .filter(arr => {
-        // 6-1、过滤字段长度为85 和 第46 到 50为空字符串的数据
+        // 6-1、过滤字段长度为85 和 第46 到 50为空字符串的数据(.mkString("").replaceAll("null", "").trim)
         val flag1 = arr.size == 85
 
         val ids = for (i <- 46 to 50) yield arr(i)
@@ -60,7 +60,7 @@ object DspLogPre {
         val areaDict = bcArea.value
         val idmpDict = bcIdmap.value
 
-        // 6-4、定义好要追加集成的字段,[provincename,cityname,district,appname,appDesc,gid]
+        // 6-4、定义好要追加集成的字段,[provincename,cityname,district,appname,appDesc,gid="-1"]
         var province = bean.provincename
         var city = bean.cityname
         var district = bean.district
@@ -68,12 +68,14 @@ object DspLogPre {
         var appdesc = bean.appDesc
         var gid = "-1"
 
-        // 6-5、取出gps坐标，并集成省市区信息  data_ware/data/dict/out_area_dict
+        // 6-5、取出gps坐标，并集成省市区信息  (lng > 73 && lng < 140 && lat > 3 && lat < 54)
+        // 6-5-1、lng：经度 ， lat 纬度
         val lng: Double = bean.lng
         val lat: Double = bean.lat
-        // lng：经度 ， lat 纬度
         if (lng > 73 && lng < 140 && lat > 3 && lat < 54) {
+          // 6-5-2、使用GeoHash.withCharacterPrecision获取5长度的标识
           val geo: String = GeoHash.withCharacterPrecision(lat, lng, 5).toBase32
+          // 6-5-3、从地域字段中提取值，如果存在则赋值给 province city district
           val areaOption = areaDict.get(geo)
           if (areaOption.isDefined) {
             val area = areaOption.get
@@ -92,14 +94,13 @@ object DspLogPre {
         }
 
 
-        // 6-7、取出5个id标识，并集成gid   user_profile/data/idmpdict/day01
+        // 6-7、取出5个id标识，并集成gid  ；Array(imei, idfa, udid, andid, mac)
         val imei = bean.imei
         val idfa = bean.idfa
         val udid = bean.openudid
         val andid = bean.androidid
         val mac = bean.mac
         val id = Array(imei, idfa, udid, andid, mac).filter(StringUtils.isNotBlank(_)).head
-
         gid = idmpDict.getOrElse(id.hashCode.toLong, -1L).toString
 
         // 6-8、返回追加完字段的bean
