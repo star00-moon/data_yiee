@@ -1,22 +1,21 @@
 package cn.doit.crawler.demo
 
+import java.io.InputStream
 import java.util
 
 import org.apache.commons.io.IOUtils
 import org.apache.http.Header
-import org.apache.http.client.methods.{HttpGet, HttpUriRequest}
-import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.client.methods.{CloseableHttpResponse, HttpGet}
+import org.apache.http.impl.client.{CloseableHttpClient, HttpClientBuilder}
 import org.apache.http.message.BasicHeader
 
 /**
   * @author: 余辉
   * @blog: https://blog.csdn.net/silentwolfyh
   * @create: 2019/10/22
-  * @description: 用于理解啥叫爬虫
-  *
-  *
-  *               Header:请求头参数详解
-  *               https://www.cnblogs.com/benbenfishfish/p/5821091.html
+  * @description:
+  * 1、用于理解啥叫爬虫
+  * 2、Header:请求头参数详解  https://yuhui.blog.csdn.net/article/details/102919766
   **/
 object HttpClientDemo {
 
@@ -32,8 +31,8 @@ object HttpClientDemo {
     headers.add(h1)
     headers.add(h2)
 
-    // 2、创建客户端
-    val client = HttpClientBuilder
+    // 2、创建客户端,设置头文件
+    val client: CloseableHttpClient = HttpClientBuilder
       .create()
       .setDefaultHeaders(headers)
       .build()
@@ -41,18 +40,17 @@ object HttpClientDemo {
     // 3、请求地址，创建get请求，执行请求
     val url = "http://www.appchina.com/"
     val request = new HttpGet(url)
-    val response = client.execute(request)
+    val response: CloseableHttpResponse = client.execute(request)
 
-    // 4、获取请求页面内容
-    val content = response.getEntity.getContent
-    val lines = IOUtils.readLines(content)
+    // 4、获取请求页面内容  response.getEntity.getContent
+    val content: InputStream = response.getEntity.getContent
+    val lines: util.List[String] = IOUtils.readLines(content)
 
-    // 5、打印请求页面内容
+    // 5、打印请求页面内容 import scala.collection.JavaConversions._
     import scala.collection.JavaConversions._
-    lines.foreach(println _)
+    lines.foreach(println)
 
     // 6、关闭客户端
     client.close()
   }
-
 }
