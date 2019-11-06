@@ -42,7 +42,7 @@ object HttpClientDemo {
     val request = new HttpGet(url)
     val response: CloseableHttpResponse = client.execute(request)
 
-    // 4、获取请求页面内容  response.getEntity.getContent
+    // 4、获取请求页面内容【response.getEntity.getContent】,且通过IOUtils存储页面信息
     val content: InputStream = response.getEntity.getContent
     val lines: util.List[String] = IOUtils.readLines(content)
 

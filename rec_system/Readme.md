@@ -43,7 +43,3 @@
 	- rec_system/data/fpgrowth_data/input/sample.dat
 	- rec_system/data/fpgrowth_data/input/test.data
 1. cn.doitedu.recomment.cb.RecForUser       根据用户评分UI矩阵，物品物品相似矩阵，做推荐(学生自己写)
-
-
-	
-	

@@ -4,8 +4,9 @@ import cn.doitedu.commons.utils.SparkUtil
 import org.apache.spark.mllib.linalg
 import org.apache.spark.mllib.linalg.{Matrix, Vectors}
 import org.apache.spark.mllib.linalg.distributed.{CoordinateMatrix, IndexedRow, IndexedRowMatrix, MatrixEntry, RowMatrix}
+import org.apache.spark.mllib.stat.MultivariateStatisticalSummary
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 /**
   * @author: 余辉
@@ -18,8 +19,8 @@ import org.apache.spark.sql.{DataFrame, Row}
   * 4、三元组矩阵(CoordinateMatrix)
   *
   * 参考：
-  * 1、https://bbs.csdn.net/topics/391002544
-  * 2、https://blog.csdn.net/u013013553/article/details/72835130
+  * 1、https://yuhui.blog.csdn.net/article/details/102932981
+  * 2、https://yuhui.blog.csdn.net/article/details/102933066
   **/
 object MatrixDemo {
 
@@ -28,16 +29,17 @@ object MatrixDemo {
     */
   def rowMatrix() = {
 
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    // 1、建立session连接
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
-    //读取原始数据
-    val df = spark.read
+    //读取原始数据 ， header 和 inferSchema
+    val df: DataFrame = spark.read
       .option("header", true)
       .option("inferSchema", true)
       .csv("rec_system/demodata/vecdata/vec.csv")
 
-    // 将数据向量化
+    // 将数据向量化 Vectors.dense
     val rdd: RDD[linalg.Vector] = df.rdd.map({
       case Row(id: Int, sex: Double, age: Double, height: Double, weight: Double, salary: Double)
       =>
@@ -54,11 +56,11 @@ object MatrixDemo {
 
     // 调矩阵的写好的算法api -- 求矩阵中各向量之间的协方差
     val comat: Matrix = rowMatrix.computeCovariance()
-    val rowit = comat.rowIter
+    val rowit: Iterator[linalg.Vector] = comat.rowIter
     rowit.foreach(println)
 
     // 求矩阵中的列统计指标（最大值，最小值，平均值.......)
-    val summary = rowMatrix.computeColumnSummaryStatistics()
+    val summary: MultivariateStatisticalSummary = rowMatrix.computeColumnSummaryStatistics()
     println(summary.min) // 每一列的最小值
     println(summary.max) // 每一列的最大值
     println(summary.variance) // 每一列的标准差
@@ -74,11 +76,11 @@ object MatrixDemo {
     */
   def indexedRowMatrix() = {
 
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
     // 将数据向量化
-    val df = spark.read
+    val df: DataFrame = spark.read
       .option("header", true)
       .option("inferSchema", true)
       .csv("rec_system/demodata/vecdata/vec.csv")
@@ -103,7 +105,7 @@ object MatrixDemo {
     */
   def coordinateMatrix() = {
 
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
     // 将数据向量化
@@ -142,7 +144,7 @@ object MatrixDemo {
     coordinMat.toRowMatrix()
 
     // 矩阵转置
-    val transposedMat = coordinMat.transpose()
+    val transposedMat: CoordinateMatrix = coordinMat.transpose()
 
     transposedMat.entries.foreach(entry => println(entry.i, entry.j, entry.value))
 
@@ -154,7 +156,13 @@ object MatrixDemo {
   }
 
   def main(args: Array[String]): Unit = {
+    // 三元组矩阵(CoordinateMatrix)
     coordinateMatrix()
-    //    rowMatrix()
+
+    // 行索引矩阵(IndexedRowMatrix)
+    indexedRowMatrix()
+
+    // 面向行的分布式矩阵(RowMatrix)
+    rowMatrix()
   }
 }

@@ -17,24 +17,27 @@ import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
   **/
 object HandWritingRecognize {
   def main(args: Array[String]): Unit = {
-    Logger.getLogger("org").setLevel(Level.WARN)
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
 
-    // 加载样本
-    val sample = loadTraining(spark, "rec_system/demodata/digitTranningVec")
+    // 1、建立session连接
+    Logger.getLogger("org").setLevel(Level.WARN)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+
+    // 2、加载样本数据，注册为 sample
+    val sample: DataFrame = loadTraining(spark, "rec_system/demodata/digitTranningVec")
     sample.createTempView("sample")
 
-    // 加载测试数据集
-    val test = loadTest(spark, "rec_system/demodata/digitTestVec")
+    // 3、加载测试数据集，注册为 test
+    val test: DataFrame = loadTest(spark, "rec_system/demodata/digitTestVec")
     test.createTempView("test")
 
-    // 求欧式距离的udf
-    val sqDist = (v1: linalg.Vector, v2: linalg.Vector) => {
+    // 4、求欧式距离的udf   Vectors.sqdist(v1, v2) ，且 注册成UDF函数 sqdist
+    val sqDist: (linalg.Vector, linalg.Vector) => Double = (v1: linalg.Vector, v2: linalg.Vector) => {
       Vectors.sqdist(v1, v2)
     }
     spark.udf.register("sqdist", sqDist)
 
-    val prediction = spark.sql(
+    //
+    val prediction: DataFrame = spark.sql(
       """
         |select
         |filename,
@@ -70,7 +73,6 @@ object HandWritingRecognize {
         |              sqdist(a.features,b.features) as dist
         |              from test a cross join sample b
         |          ) o1
-        |
         |   ) o2
         |where o2.rn <=5
         |group by filename,alabel,blabel
@@ -92,7 +94,6 @@ object HandWritingRecognize {
       .rdd
       .map(row => (row.getAs[Double]("prediction"), row.getAs[Double]("alabel")))
 
-
     // 计算准确率
     val metrics = new MulticlassMetrics(rdd)
     println("预测准确率为： " + metrics.accuracy)
@@ -100,41 +101,57 @@ object HandWritingRecognize {
     spark.close()
   }
 
-  // 加载样本
+  /***
+    * 加载样本函数
+    */
   def loadTraining(spark: SparkSession, path: String): DataFrame = {
     import spark.implicits._
 
+    // 读取数据 path
     val ds: Dataset[String] = spark.read.textFile(path)
     // 10.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.
     import spark.implicits._
+
     val df: DataFrame = ds.rdd.map(line => {
-      val split = line.split("\001")
-      val lable = split(0).toDouble
-      val featuresArr = split(1).split(",").map(_.toDouble)
-      val vec = Vectors.dense(featuresArr)
+      // 切分数据 "\001"
+      val split: Array[String] = line.split("\001")
+      // lable 为 split(0)
+      val lable: Double = split(0).toDouble
+      // featuresArr 为 split(1) ，转为数组
+      val featuresArr: Array[Double] = split(1).split(",").map(_.toDouble)
+      // featuresArr变成向量
+      val vec: linalg.Vector = Vectors.dense(featuresArr)
+      //   (lable, vec) 且   .toDF("label", "features")
       (lable, vec)
     })
       .toDF("label", "features")
     df
   }
 
-  /***
-    * 加载测试数据集
+  /** *
+    * 加载测试数据集函数
     */
   def loadTest(spark: SparkSession, path: String): DataFrame = {
     import spark.implicits._
 
+    // 读取数据 path
     val ds: Dataset[String] = spark.read.textFile(path)
     // 10.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.
     import spark.implicits._
     val df: DataFrame = ds.rdd.map(line => {
-      val split = line.split("\001")
-      val filename = split(0)
-      val split2 = split(1).split("\002")
-      val label = split2(0).toDouble
-
-      val featuresArr = split2(1).split(",").map(_.toDouble)
-      val vec = Vectors.dense(featuresArr)
+      // 切分数据 "\001"
+      val split: Array[String] = line.split("\001")
+      // filename 为 split(0)
+      val filename: String = split(0)
+      // split2 为 split(1)
+      val split2: Array[String] = split(1).split("\002")
+      // lable 为 split2(0)
+      val label: Double = split2(0).toDouble
+      // featuresArr 为 split2(1) ，转为数组
+      val featuresArr: Array[Double] = split2(1).split(",").map(_.toDouble)
+      // featuresArr变成向量
+      val vec: linalg.Vector = Vectors.dense(featuresArr)
+      //    (filename, label, vec) 且    .toDF("filename", "label", "features")
       (filename, label, vec)
     })
       .toDF("filename", "label", "features")
