@@ -24,9 +24,10 @@ object KMeansDemo {
     val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     val df: DataFrame = spark.read.option("inferSchema", true).option("header", true).csv("rec_system/data/kmeans/a.txt")
     import spark.implicits._
+    import org.apache.spark.sql.functions._
 
     /** *
-      * 2、字段处理变成数字
+      * 2、字段处理变成向量
       * id,queke,chidao,score,zaozixi,wanzixi,keshui
       * StringIndexer类 ：可以把一些只有若干个取值的文字型特征变成数字
       */
@@ -49,7 +50,6 @@ object KMeansDemo {
     val df2: DataFrame = stringindexer2.fit(df1).transform(df1).drop("zaozixi").drop("wanzixi")
 
     // 3、注册UDF函数，将数组转为向量  Vectors.dense(arr.toArray)
-    import org.apache.spark.sql.functions._
     val tovec: UserDefinedFunction = udf((arr: mutable.WrappedArray[Double]) => {
       Vectors.dense(arr.toArray)
     })

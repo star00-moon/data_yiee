@@ -8,7 +8,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
   * @blog: https://blog.csdn.net/silentwolfyh
   * @create: 2019/10/22
   * @description:
-  * 1、两点距离公式
+  * 1、两点距离公式  1doc/两点距离公式.png
   * 2、hive函数大全：https://yuhui.blog.csdn.net/article/details/102932531
   **/
 object VectorDemo2 {

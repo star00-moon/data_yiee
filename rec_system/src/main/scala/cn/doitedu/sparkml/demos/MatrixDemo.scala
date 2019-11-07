@@ -157,12 +157,12 @@ object MatrixDemo {
 
   def main(args: Array[String]): Unit = {
     // 三元组矩阵(CoordinateMatrix)
-    coordinateMatrix()
+//    coordinateMatrix()
 
     // 行索引矩阵(IndexedRowMatrix)
     indexedRowMatrix()
 
     // 面向行的分布式矩阵(RowMatrix)
-    rowMatrix()
+//    rowMatrix()
   }
 }

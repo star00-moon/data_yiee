@@ -2,6 +2,7 @@ package cn.doitedu.recomment.cb
 
 import cn.doitedu.commons.utils.SparkUtil
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.types.{DataTypes, StructType}
 
 /**
@@ -12,24 +13,25 @@ import org.apache.spark.sql.types.{DataTypes, StructType}
   **/
 object RateScore {
   def main(args: Array[String]): Unit = {
+
+    // 1、建立session连接
     Logger.getLogger("org").setLevel(Level.WARN)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    import spark.implicits._
+    import org.apache.spark.sql.functions._
 
-    //  把数据变成:   gid   pid   score
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
-
-    // 加载行为日志数据
-    val schema = new StructType()
+    // 2、设置数据Schema以及加载行为日志数据，生成临时表 event
+    val schema: StructType = new StructType()
       .add("gid", DataTypes.StringType)
       .add("event_type", DataTypes.StringType)
       .add("event", DataTypes.createMapType(DataTypes.StringType, DataTypes.StringType))
-
-    val event = spark.read.schema(schema).json("rec_system/data/ui_rate/event.log")
+    val event: DataFrame = spark.read.schema(schema).json("rec_system/data/ui_rate/event.log")
     event.printSchema()
     event.show(10, false)
-
     event.createTempView("event")
 
     /**
+      * 3、把数据变成:   gid   pid   score
       * pv事件给1分
       * addcart事件给2分
       * 收藏事件给1分
@@ -37,7 +39,7 @@ object RateScore {
       * 推荐事件给3分
       * .......
       */
-    val event_socre = spark.sql(
+    val event_socre: DataFrame = spark.sql(
       """
         |
         |select
@@ -58,11 +60,11 @@ object RateScore {
 
 
     /**
-      * 处理评论数据bayes分类结果
+      * 4、处理评论数据bayes分类结果
       */
-    val comment = spark.read.option("header", true).csv("rec_system/data/ui_rate/u.comment.dat")
+    val comment: DataFrame = spark.read.option("header", true).csv("rec_system/data/ui_rate/u.comment.dat")
     comment.createTempView("cmt")
-    val cmt_score = spark.sql(
+    val cmt_score: DataFrame = spark.sql(
       """
         |
         |select
@@ -80,17 +82,17 @@ object RateScore {
 
     cmt_score.show(10, false)
 
-    import spark.implicits._
-    import org.apache.spark.sql.functions._
-
-    val score_sum = event_socre.union(cmt_score)
+    // 5、event_socre.union(cmt_score),按照'gid, 'pid分组，且累加 score
+    val score_sum: DataFrame = event_socre.union(cmt_score)
       .groupBy('gid, 'pid)
       .agg("score" -> "sum").withColumnRenamed("sum(score)", "score")
 
     score_sum.show(10, false)
 
-    // 保存UI评分矩阵 ： user-item的平均指数
+    // 6、保存UI评分矩阵 ： user-item的平均指数
     score_sum.coalesce(1).write.parquet("rec_system/data/cb_out/ui")
+
+    // 7、关闭spark
     spark.close()
   }
 }

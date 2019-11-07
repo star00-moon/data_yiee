@@ -12,7 +12,7 @@ import org.apache.spark.ml.linalg.{DenseVector, SparseVector, Vectors}
   **/
 object VectorDemo {
 
-  /***
+  /** *
     * 使用向量的一些api，构造密集向量和稀疏向量
     */
   def constructVector(): Unit = {
@@ -70,7 +70,7 @@ object VectorDemo {
 
     // 计算欧氏距离
     val sqd: Double = Vectors.sqdist(v1, v2) // sqdist 为平方差
-    val eudist1: Double = Math.sqrt(sqd)      //Math.sqrt 开根号
+    val eudist1: Double = Math.sqrt(sqd) //Math.sqrt 开根号
     val eudist2: Double = Math.pow(sqd, 1d / 2) // Math.pow开根号
     println(eudist1)
     println(eudist2)
@@ -106,9 +106,16 @@ object VectorDemo {
   }
 
   def main(args: Array[String]): Unit = {
-        constructVector()
-//    caclEuDistance()
-//        caclEuDistance2()
-//        caclCosineDistance()
+    //使用向量的一些api，构造密集向量和稀疏向量
+    //        constructVector()
+
+    // 使用Vectors工具类上的工具方法，计算向量之间的欧氏距离
+    //    caclEuDistance()
+
+    //自己写代码，计算向量之间的欧氏距离
+    //            caclEuDistance2()
+
+    // 自己写代码，计算向量之间的余弦距离
+    caclCosineDistance()
   }
 }
