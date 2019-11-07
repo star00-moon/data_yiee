@@ -6,7 +6,7 @@ import cn.doitedu.commons.utils.SparkUtil
 import org.apache.commons.lang3.{StringEscapeUtils, StringUtils}
 import org.apache.spark.graphx.{Edge, Graph, VertexId, VertexRDD}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import cn.doitedu.commons.utils.FileUtils
 
 import scala.collection.immutable
@@ -23,18 +23,18 @@ object Demo1 {
   def main(args: Array[String]): Unit = {
 
     // 1、建立session连接 import spark.implicits._
-    val spark = SparkUtil.getSparkSession(this.getClass.getSimpleName)
+    val spark: SparkSession = SparkUtil.getSparkSession(this.getClass.getSimpleName)
     import spark.implicits._
 
     // 2、读取数据以及缓存起来
-    val df = spark.read.option("header", true).csv("user_profile/demodata/graphx/input/demo1.dat")
+    val df: DataFrame = spark.read.option("header", true).csv("user_profile/demodata/graphx/input/demo1.dat")
     df.cache()
-    // 3、将数据描述成点 vertcies,集合(RDD[Vertex]),字段为 phone，name，wx，返回array
-    val vertcies: RDD[(Long, String)] = df.rdd.flatMap(row => {
 
-      val phone = row.getAs[String]("phone")
-      val name = row.getAs[String]("name")
-      val wx = row.getAs[String]("wx")
+    // 3、将数据描述成点 vertcies: RDD[(Long, String)] ,字段为 phone，name，wx，返回array
+    val vertcies: RDD[(Long, String)] = df.rdd.flatMap(row => {
+      val phone: String = row.getAs[String]("phone")
+      val name: String = row.getAs[String]("name")
+      val wx: String = row.getAs[String]("wx")
 
       //3-1 过滤掉这一行中的空标识
       //3-2 将一个字符串标识，转换成一个Vertex,其实就是个tuple：(顶点hashCode,顶点id)
@@ -59,13 +59,13 @@ object Demo1 {
 
       val ids: Array[String] = Array(phone, name, wx).filter(StringUtils.isNotBlank(_))
       // 4-1 Edge （边）: 来源id-->目标id,第一条边（phone--->name）,第二条边（phone--->wx）
-      for (i <- 1 until ids.size) yield Edge(ids(0).hashCode.toLong, ids(i).hashCode.toLong, "")
+      for (i <- 1 until ids.length) yield Edge(ids(0).hashCode.toLong, ids(i).hashCode.toLong, ids(0) + "---" + ids(i))
     })
 
     // 5、用点集合和边集合，构造图数据模型Graph
     val graph = Graph(vertcies, edges)
 
-    // 6、求最大连通子图(Graph),获取所有顶点
+    // 6、求最大连通子图(Graph),获取所有顶点, 子图ID为Long类型，id为String类型
     val value: Graph[VertexId, String] = graph.connectedComponents()
     val connected: VertexRDD[VertexId] = value.vertices
     connected.take(20).foreach(println)
@@ -74,8 +74,8 @@ object Demo1 {
     // (113568560,-1485777898)
     // (113568358,-1095633001)
 
-    // 7、整理结果为gid-> id，且保存结果
-    val resDF: DataFrame = vertcies.join(connected) // (38771171,("马德华",-1095633001))
+    // 7、顶点ID连接子图id，变成DF（gid-> id），且保存结果需要去重。
+    val resDF: DataFrame = vertcies.join(connected)
       .map(tp => (tp._2._2, tp._2._1))
       .toDF("gid", "id")
 
@@ -109,11 +109,7 @@ object Demo1 {
       * +-----------+--------------------------------------------------------+
       */
 
-    // 10、 保存结果
-    FileUtils.deleteDir(new File("user_profile/demodata/graphx/out_idmp"))
-    idmapping.write.parquet("user_profile/demodata/graphx/out_idmp")
-
-    // 11、 关闭spark
+    // 10、 关闭spark
     spark.close()
   }
 }

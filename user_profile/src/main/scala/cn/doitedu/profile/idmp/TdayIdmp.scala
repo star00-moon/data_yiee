@@ -40,7 +40,7 @@ object TdayIdmp {
     val ids: RDD[Array[String]] = cmccIds.union(dspIds).union(eventIds)
     ids.cache()
 
-    //  5、映射点集合 vertices
+    //  5、映射点集合 vertices (strId.hashCode.toLong, strId)
     val vertices: RDD[(Long, String)] = ids.flatMap(arr => {
       arr.map(strId => (strId.hashCode.toLong, strId))
     })

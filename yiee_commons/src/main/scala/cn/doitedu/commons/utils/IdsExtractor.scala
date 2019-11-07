@@ -40,11 +40,9 @@ object IdsExtractor {
     * @return
     */
   def extractDemoEventLogIds(spark: SparkSession, path: String): RDD[Array[String]] = {
-
-    val eventlog = spark.read.textFile(path)
-
+    val eventlog: Dataset[String] = spark.read.textFile(path)
     eventlog.rdd.map(line => {
-      val arr = line.split(",")
+      val arr: Array[String] = line.split(",")
       arr.filter(id => StringUtils.isNotBlank(id))
     })
   }
@@ -57,11 +55,9 @@ object IdsExtractor {
     * @return
     */
   def extractDemoCmccLogIds(spark: SparkSession, path: String): RDD[Array[String]] = {
-
-    val cmcclog = spark.read.textFile(path)
-    // 整理格式，将各种日志抽取的id字段，都统一成格式：Array(id1,id2,id3,....)
+    val cmcclog: Dataset[String] = spark.read.textFile(path)
     cmcclog.rdd.map(line => {
-      val arr = line.split(",")
+      val arr: Array[String] = line.split(",")
       arr.filter(id => StringUtils.isNotBlank(id))
     })
   }
@@ -74,9 +70,9 @@ object IdsExtractor {
     * @return
     */
   def extractDspLogIds(spark: SparkSession, path: String): RDD[Array[String]] = {
-    val dsplog = spark.read.textFile(path)
+    val dsplog: Dataset[String] = spark.read.textFile(path)
     dsplog.rdd.map(line => {
-      val arr = line.split(",", -1)
+      val arr: Array[String] = line.split(",", -1)
       Array(arr(46), arr(47), arr(48), arr(49), arr(50)).filter(StringUtils.isNotBlank(_))
     })
   }

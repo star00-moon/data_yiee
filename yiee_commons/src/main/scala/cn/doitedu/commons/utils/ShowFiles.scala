@@ -15,10 +15,10 @@ object ShowFiles {
     val spark: SparkSession = SparkUtil.getSparkSession()
 
     // 2、设置路径和读取 parquet 格式
-    val path = "user_profile/demodata/idmp/output/day01";
+    val path = "user_profile/demodata/idmp/output/day01"
 
     val df: DataFrame = showParquet(spark, path)
-    //    val df: DataFrame = showCsv(spark, "user_profile/demodata/graphx/out_gidlog")
+    //    val df: DataFrame = showCsv(spark, path)
 
     // 3、打印Schema 和 show 100
     df.printSchema()
@@ -33,6 +33,6 @@ object ShowFiles {
   }
 
   def showCsv(spark: SparkSession, path: String): DataFrame = {
-    spark.read.csv(path)
+    spark.read.option("header", true).csv(path)
   }
 }

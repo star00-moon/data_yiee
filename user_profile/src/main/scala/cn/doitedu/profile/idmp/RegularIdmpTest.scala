@@ -15,7 +15,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
   * @create: 2019/10/22
   * @description: 常规的id映射字典计算程序
   **/
-object RegularIdmp {
+object RegularIdmpTest {
 
   def main(args: Array[String]): Unit = {
     //1、建立session连接
@@ -25,20 +25,20 @@ object RegularIdmp {
 
     //2、定义处理数据路径 cmccLogPath dspLogPath eventLogPath 以及 抽取当日的各类数据的id标识数据
     // 2-1、测试数据
-//    val cmccLogPath = "user_profile/demodata/idmp/input/day02/cmcclog"
-//    val dspLogPath = "user_profile/demodata/idmp/input/day02/dsplog"
-//    val eventLogPath = "user_profile/demodata/idmp/input/day02/eventlog"
-//    val cmccIds: RDD[Array[String]] = IdsExtractor.extractDemoCmccLogIds(spark, cmccLogPath)
-//    val dspIds: RDD[Array[String]] = IdsExtractor.extractDemoDspLogIds(spark, dspLogPath)
-//    val eventIds: RDD[Array[String]] = IdsExtractor.extractDemoEventLogIds(spark, eventLogPath)
+    val cmccLogPath = "user_profile/demodata/idmp/input/day02/cmcclog"
+    val dspLogPath = "user_profile/demodata/idmp/input/day02/dsplog"
+    val eventLogPath = "user_profile/demodata/idmp/input/day02/eventlog"
+    val cmccIds: RDD[Array[String]] = IdsExtractor.extractDemoCmccLogIds(spark, cmccLogPath)
+    val dspIds: RDD[Array[String]] = IdsExtractor.extractDemoDspLogIds(spark, dspLogPath)
+    val eventIds: RDD[Array[String]] = IdsExtractor.extractDemoEventLogIds(spark, eventLogPath)
 
     // 2-1、真实数据
-        val cmccLogPath = "user_profile/data/cmcclog/day01"
-        val dspLogPath = "user_profile/data/dsplog/day01"
-        val eventLogPath = "user_profile/data/eventlog/day01"
-        val cmccIds: RDD[Array[String]] = IdsExtractor.extractCmccLogIds(spark, cmccLogPath)
-        val dspIds: RDD[Array[String]] = IdsExtractor.extractDspLogIds(spark, dspLogPath)
-        val eventIds: RDD[Array[String]] = IdsExtractor.extractEventLogIds(spark, eventLogPath)
+    //    val cmccLogPath = "user_profile/data/cmcclog/day01"
+    //    val dspLogPath = "user_profile/data/dsplog/day01"
+    //    val eventLogPath = "user_profile/data/eventlog/day01"
+    //    val cmccIds: RDD[Array[String]] = IdsExtractor.extractCmccLogIds(spark, cmccLogPath)
+    //    val dspIds: RDD[Array[String]] = IdsExtractor.extractDspLogIds(spark, dspLogPath)
+    //    val eventIds: RDD[Array[String]] = IdsExtractor.extractEventLogIds(spark, eventLogPath)
 
     // 3、查询cmccIds、dspIds、eventIds的并集 ， union是返回两个数据集的并集，不包括重复行，要求列数要一样，类型可以不同
     val ids: RDD[Array[String]] = cmccIds.union(dspIds).union(eventIds)
@@ -57,50 +57,44 @@ object RegularIdmp {
     })
 
     // 6、过滤出现次数<阈值的边
-    val filteredEdges: RDD[Edge[String]] = edges.map(edge => (edge, 1)).reduceByKey(_ + _).filter(_._2 > 0).map(_._1)
+    val filterEdges: RDD[Edge[String]] = edges.map(e => (e, 1)).reduceByKey(_ + _).filter(_._2 > 1).map(r => r._1)
 
     //  7、加载上日的idmapping数据
-    val idmpDF: DataFrame = spark.read.parquet("user_profile/demodata/idmp/output/day01")
+    val yesterdayIDMapping: DataFrame = spark.read.parquet("user_profile/demodata/idmp/output/day01")
 
     // 8、将上日的idmp数据也映射成点集合和边集合
     // 8-1、点集合转为 Array((id, ""), (gid, ""))
-    val preIds: RDD[(VertexId, String)] = idmpDF.rdd.flatMap({
-      case Row(id: Long, gid: Long) => Array((id, ""), (gid, ""))
-    })
+    val yesterdayV: RDD[(VertexId, String)] = yesterdayIDMapping.rdd.flatMap({ case Row(id: VertexId, gid: VertexId) => Array((id, ""), (gid, "")) })
     // 8-2、边集合转为 Edge(id, gid, "")
-    val preEges: RDD[Edge[String]] = idmpDF.rdd.map({
-      case Row(id: Long, gid: Long) => Edge(id, gid, "")
-    })
+    val yesterdayE: RDD[Edge[String]] = yesterdayIDMapping.rdd.map({ case Row(id: VertexId, gid: VertexId) => Edge(id, gid, "") })
 
     // 9、历史点集合union今日点集合， 历史边集合union今日边集合
-    val graph = Graph(vertices.union(preIds), filteredEdges.union(preEges))
+    val graph = Graph(yesterdayV.union(vertices), yesterdayE.union(edges))
 
     // 10.求最大连通子图   currentDayResult
     val currentDayResult: VertexRDD[VertexId] = graph.connectedComponents().vertices
 
     // 11、利用上日idmapping调整今日的计算结果（保持gid的延续性），将历史的idmapping变成（id-->gid），转为map集合放入广播变量
-    val idmpMap: collection.Map[VertexId, VertexId] = idmpDF.rdd.map({
-      case Row(id: Long, gid: Long) => (id, gid)
-    }).collectAsMap()
+    val idmpMap: collection.Map[VertexId, VertexId] = yesterdayIDMapping.rdd.map({ case Row(id: VertexId, gid: VertexId) => (id, gid) }).collectAsMap()
     val bc: Broadcast[collection.Map[VertexId, VertexId]] = spark.sparkContext.broadcast(idmpMap)
 
     // 12、利用上日idmapping调整今日的计算结果，所以需要今日的 currentDayResult 进行处理
     val ajustedResult: RDD[(VertexId, VertexId)] = currentDayResult
       // 12-1、按今日gid分组 【.groupBy(_._2)】,分组之后变为（gid,(id1,id2,id3 。。。 )）
       .groupBy(_._2)
-      .flatMap(tp => {
+      .flatMap(row => {
         // 12-2、取到今日的 gid
-        var gid: VertexId = tp._1
+        var gid: VertexId = row._1
 
         // 12-3、取到今日的 ids。 tp._2为【id-->gid】,所以需要去重获得ids
-        val idSet: Set[VertexId] = tp._2.toMap.keySet
+        val ids: Set[VertexId] = row._2.toMap.keySet
 
         // 12-4、取到历史的 。从广播变量中 【id-->gid】
         val idmpLastDay: collection.Map[VertexId, VertexId] = bc.value
         val historyIdSet: collection.Set[VertexId] = idmpLastDay.keySet
 
         // 12-5、取历史idset和今日这一组idset的交集 intersect
-        val sharedIds: Set[VertexId] = idSet.intersect(historyIdSet)
+        val sharedIds: Set[VertexId] = ids.intersect(historyIdSet)
 
         // 12-6、如果存在交集，则取历史的gid作为当日这组ids的gid
         if (sharedIds != null && sharedIds.nonEmpty) {
@@ -108,9 +102,9 @@ object RegularIdmp {
         }
 
         // 12-7、再返回今日这一组结果 (id, gid)
-        idSet.map(id => (id, gid))
-
+        ids.map(id => (id, gid))
       })
+    ajustedResult
 
     // 13、输出保存最终结果
     FileUtils.deleteDir(new File("user_profile/data/output/idmp/day01"))
@@ -118,9 +112,8 @@ object RegularIdmp {
     ajustedResult.toDF("id", "gid").show(100, false)
 
     // 14、关闭spark
-    spark.close()
 
-    /***
+    /** *
       * +-----------+-----------+
       * |id         |gid        |
       * +-----------+-----------+

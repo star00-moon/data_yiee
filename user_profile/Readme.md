@@ -7,14 +7,18 @@
 2. cn.doitedu.commons.utils.FileUtils           【yiee_commons】删除文件目录 及 目录下面的文件
 3. cn.doitedu.commons.utils.ShowFiles           【yiee_commons】查看文件内容
 4. demo.graphx.Demo1_2  利用idmapping（id映射字典）来对日志进行加工，为每条日志添加一个gid字段
+    - user_profile/demodata/graphx/out_idmp
     - user_profile/demodata/graphx/input    图计算日志
 
 ### 第二天
+1. cn.doitedu.commons.utils.IdsExtractor        【yiee_commons】各类源数据的id标识抽取程序    
 1. cn.doitedu.profile.idmp.TdayIdmp      T日IDMP计算程序    
     - user_profile/demodata/idmp/input/day01/cmcclog
     - user_profile/demodata/idmp/input/day01/dsplog
     - user_profile/demodata/idmp/input/day01/eventlog
-1. cn.doitedu.commons.utils.IdsExtractor        【yiee_commons】各类源数据的id标识抽取程序    
+    - user_profile/data/cmcclog/day01
+    - user_profile/data/dsplog/day01
+    - user_profile/data/eventlog/day01
 1. cn.doitedu.profile.idmp.RegularIdmp          常规的id映射字典计算程序
     - user_profile/data/cmcclog/day01
     - user_profile/data/dsplog/day01
