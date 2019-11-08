@@ -1,7 +1,7 @@
 data_ware/target/
 rec_system/target/
 user_profile/target/
-user_profile/data/output
+user_profile/data/output/*
 user_profile/demodata/graphx/out_gidlog
 user_profile/demodata/graphx/out_idmp
 user_profile/demodata/idmp/output

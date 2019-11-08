@@ -1,0 +1,49 @@
+{
+	"u": {
+		"cookieid": "HsOorABPB",
+		"account": "05289",
+		"email": "Fh8h@G4hbi.com",
+		"phoneNbr": "20096655112",
+		"birthday": "2002-01-17",
+		"isRegistered": true,
+		"isLogin": true,
+		"addr": "qBvdcTyPO",
+		"gender": "F",
+		"phone": {
+			"imei": "NNVGIZ",
+			"osName": "ios",
+			"osVer": "10.05",
+			"resolution": "1356*768",
+			"androidId": "",
+			"manufacture": "apple",
+			"deviceId": "0XYAUq"
+		},
+		"app": {
+			"appid": "com.51doit.mall",
+			"appVer": "2.0.1",
+			"release_ch": "百度手机助手",
+			"promotion_ch": "网易"
+		},
+		"loc": {
+			"areacode": 532324203,
+			"longtitude": 100.80869161002043,
+			"latitude": 25.134465800837827,
+			"carrier": "中国移动",
+			"netType": "3G",
+			"cid_sn": "eCHFxiH4ZPPZ",
+			"ip": "189.60.43.153"
+		},
+		"sessionId": "aNHKnDe44hS0"
+	},
+	"logType": "pg_view",
+	"commit_time": 1560672636617,
+	"event": {
+		"ad_trace_id": "",
+		"is_rec": "0",
+		"pgid": "001",
+		"referal": "",
+		"title": "线上多易--搞IT，就要往死里学",
+		"skuid": "",
+		"url": "http://www.51doit.com"
+	}
+}

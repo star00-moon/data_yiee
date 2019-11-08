@@ -26,18 +26,18 @@ object HttpClientDemo {
     val h1 = new BasicHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
     // 1-2、User-Agent User-Agent的内容包含发出请求的用户信息（模拟浏览器）
     val h2 = new BasicHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3314.0 Safari/537.36 SE 2.X MetaSr 1.0")
-    //1-3、头文件放入list集合中
+    // 1-3、头文件放入list集合中
     val headers = new util.ArrayList[Header]()
     headers.add(h1)
     headers.add(h2)
 
-    // 2、创建客户端,设置头文件
-    val client: CloseableHttpClient = HttpClientBuilder
-      .create()
-      .setDefaultHeaders(headers)
-      .build()
+    // 2、创建客户端,设置头文件,建立客户端
+     val client: CloseableHttpClient = HttpClientBuilder
+       .create()
+       .setDefaultHeaders(headers)
+       .build()
 
-    // 3、请求地址，创建get请求，执行请求
+    // 3、请求地址，创建get请求，client执行get请求
     val url = "http://www.appchina.com/"
     val request = new HttpGet(url)
     val response: CloseableHttpResponse = client.execute(request)

@@ -64,6 +64,9 @@ object IdsExtractor {
 
   /**
     * 抽取dsp竞价日志demo数据
+    * 1、map切分之后，过滤空值，都统一成格式：Array(id1,id2,id3,....)
+    * 2、需要的字段：【imei、mac、idfa、openudid、androidid】
+    * 3、需要的字段：arr(46), arr(47), arr(48), arr(49), arr(50)
     *
     * @param spark
     * @param path
@@ -79,6 +82,8 @@ object IdsExtractor {
 
   /**
     * 抽取公司内部事件日志demo数据
+    * 1、map切分之后，过滤空值，都统一成格式：Array(id1,id2,id3,....)
+    * 2、需要的字段：【imei、deviceId、androidId、account、cookieid】
     *
     * @param spark
     * @param path
@@ -103,15 +108,15 @@ object IdsExtractor {
 
   /**
     * 抽取cmcc流量日志数据
+    * 1、map切分之后，过滤空值，都统一成格式：Array(id1,id2,id3,....)
+    * 2、需要的字段：【arr(6)、arr(7)、arr(8)】
     *
     * @param spark
     * @param path
     * @return
     */
   def extractCmccLogIds(spark: SparkSession, path: String): RDD[Array[String]] = {
-
     val cmcclog: Dataset[String] = spark.read.textFile(path)
-    // 整理格式，将各种日志抽取的id字段，都统一成格式：Array(id1,id2,id3,....)
     cmcclog.rdd.map(line => {
       val arr: Array[String] = line.split("\t", -1)
       Array(arr(6), arr(7), arr(8)).filter(id => StringUtils.isNotBlank(id))

@@ -23,7 +23,7 @@ object DictsLoader {
     *
     * @param spark sparksession
     * @param path  字典所在路径
-    * @return Map(geo, (province, city, district))
+    * @return 变成 kv 形式 Map(geo, (province, city, district))
     */
   def loadAreaDict(spark: SparkSession, path: String): collection.Map[String, (String, String, String)] = {
     val area: DataFrame = spark.read.parquet(path)
@@ -41,7 +41,7 @@ object DictsLoader {
     *
     * @param spark
     * @param path
-    * @return Map[id, gid]
+    * @return 变成 kv 形式 Map[id, gid]
     */
   def loadIdmpDict(spark: SparkSession, path: String): collection.Map[Long, Long] = {
     val idAndGids: DataFrame = spark.read.parquet(path)
@@ -54,11 +54,12 @@ object DictsLoader {
 
 
   /**
-    * 加载app信息字典,appid->4, appname->1, appdesc->5
+    * 加载app信息字典
+    * 1、需要切分数据， ,appid->4, appname->1, appdesc->5
     *
     * @param spark
     * @param path
-    * @return Map[appid, (appname, appdesc)]
+    * @return 变成 kv 形式 Map[appid, (appname, appdesc)]
     */
   def loadAppDict(spark: SparkSession, path: String): collection.Map[String, (String, String)] = {
     val appDs: Dataset[String] = spark.read.textFile(path)
@@ -69,8 +70,6 @@ object DictsLoader {
         val appid: String = arr(4)
         val appname: String = arr(1)
         val appdesc: String = arr(5)
-
-        // 变成 kv 形式
         (appid, (appname, appdesc))
       })
       .filter(tp => StringUtils.isNotBlank(tp._1))
@@ -79,30 +78,26 @@ object DictsLoader {
 
 
   /**
-    * 加载url内容信息字典 category->0   title->1    url->2
+    * 加载url内容信息字典
+    * 1、需要切分数据， ,category->0   title->1    url->2
     *
     * @param spark
     * @param path
-    * @return Map[url, (title, category)]
+    * @return 变成 kv 形式 Map[url, (title, category)]
     */
   def loadUrlContentDict(spark: SparkSession, path: String): collection.Map[String, (String, String)] = {
-    val urlContentDs = spark.read.textFile(path)
-    val urlContentMap: collection.Map[String, (String, String)] = urlContentDs
+    val urlContentDs: Dataset[String] = spark.read.textFile(path)
+    urlContentDs
       .rdd
       .map(line => {
-
-        val arr = line.split("\001", -1)
-        val category = arr(0)
-        val title = arr(1)
-        val url = arr(2)
-
-        // 变成 kv 形式
+        val arr: Array[String] = line.split("\001", -1)
+        val category: String = arr(0)
+        val title: String = arr(1)
+        val url: String = arr(2)
         (url, (title, category))
       })
       .filter(tp => StringUtils.isNotBlank(tp._1))
       .collectAsMap()
-
-    urlContentMap
   }
 
   def main(args: Array[String]): Unit = {
