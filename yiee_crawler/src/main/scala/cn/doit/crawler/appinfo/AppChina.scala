@@ -6,8 +6,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 
-import scala.io.Source
-
 /**
   * @author: 余辉
   * @blog: https://blog.csdn.net/silentwolfyh
@@ -34,7 +32,7 @@ object AppChina {
     val cookie = "Hm_lvt_c1a192e4e336c4efe10f26822482a1a2=1568770426; Hm_lpvt_c1a192e4e336c4efe10f26822482a1a2=1568770426; UM_distinctid=16d420103a3367-05aee9bc53c7c5-353166-1fa400-16d420103a4371; CNZZDATA1257961818=393573309-1568768131-null%7C1568768131"
     val headers: Map[String, String] = Map("userAgent" -> userAgent, "referal" -> "http://www.baidu.com", "Cookie" -> cookie)
 
-    // 2、建立IO流，写入数据
+    // 2、建立IO流  BufferedWriter(new FileWriter)
     val bw = new BufferedWriter(new FileWriter(urlSavePath, true))
 
     // 3、循环翻页
@@ -44,27 +42,27 @@ object AppChina {
       println(s"-----------${i}-----------")
       import scala.collection.JavaConversions._
 
-      // 3-2、程序执行且获取网页内容
+      // 3-2、通过Jsoup请求页面，程序执行且获取网页内容
       val doc: Document = Jsoup.connect(url).headers(headers).execute().parse()
 
-      // 3-3、获取app-name的标签
+      // 3-3、获取所有 class 为 app-name的标签
       val h1tags: Elements = doc.getElementsByClass("app-name")
 
-      // 3-4、获取基础数据
+      // 3-4、获取基础数据进行循环获取
       for (h1 <- h1tags) {
-        // 3-4-1、app名称
+        // 3-4-1、获取 title 的属性值 ，取名：appname
         val appname: String = h1.attr("title")
 
-        // 3-4-2、获取第一个链接
+        // 3-4-2、获取第一个 a 便签 ， 取名：atag
         val atag: Element = h1.getElementsByTag("a").get(0)
 
-        // 3-4-3、app详情页地址
+        // 3-4-3、获取atag的属性值 href，取名：appDtlUrl
         val appDtlUrl: String = atag.attr("href")
 
-        // 3-4-4、app的id
+        // 3-4-4、获取 appDtlUrl 的 appid
         val appid: String = appDtlUrl.substring(appDtlUrl.lastIndexOf("/") + 1)
 
-        // 3-4-5、保存数据
+        // 3-4-5、保存数据 appid 、appname 、appDtlUrl \001隔开
         println(s"${appid}\001${appname}\001${appDtlUrl}")
         bw.write(s"${appid}\001${appname}\001${appDtlUrl}")
         bw.newLine()
@@ -90,31 +88,32 @@ object AppChina {
     val cookie = "Hm_lvt_c1a192e4e336c4efe10f26822482a1a2=1568770426; Hm_lpvt_c1a192e4e336c4efe10f26822482a1a2=1568770426; UM_distinctid=16d420103a3367-05aee9bc53c7c5-353166-1fa400-16d420103a4371; CNZZDATA1257961818=393573309-1568768131-null%7C1568768131"
     val headers: Map[String, String] = Map("userAgent" -> userAgent, "referal" -> "http://www.baidu.com", "Cookie" -> cookie)
 
-    // 2、建立IO流，写入数据
+    // 2、建立IO流，BufferedWriter(new FileWriter)
     val bw = new BufferedWriter(new FileWriter(resultSavePath, true))
 
-    // 3、加载详情页地址列表
+    // 3、加载详情页地址列表 BufferedReader(new FileReader(））
     val br = new BufferedReader(new FileReader("yiee_crawler/data/appchina-dtlurls/dtl.urls"))
     var line: String = br.readLine()
 
     // 4、循环遍历每一个地址，抓取详情页，提取app描述信息
     while (line != null) {
-      // 4-1、获取URL，通过Jsoup请求获得页面信息
+      // 4-1、获取AppURL，通过Jsoup请求页面，程序执行且获取网页内容
       val arr: Array[String] = line.split("\001")
       val url: String = arr(2)
       import scala.collection.JavaConversions._
-      val doc: Document = Jsoup.connect(s"http://www.appchina.com${url}").headers(headers).execute().parse() //http://www.appchina.com/app/com.vpgame.eric
+      val doc: Document = Jsoup.connect(s"http://www.appchina.com${url}").headers(headers).execute().parse()
 
-      // 4-2、提取app描述信息
+      // 4-2、获取所有 class 为 art-content 的标签，取第一值的内容
       val p: Element = doc.getElementsByClass("art-content").get(0)
       val appDesc: String = p.text()
 
-      // 4-3、app的id ， app名称 ， app相信信息
+      // 4-3、保存app的id ， app名称 ， app相信信息，且按照 \001隔开
       println(s"${arr(0)}\001${arr(1)}\001${appDesc}")
       bw.write(s"${arr(0)}\001${arr(1)}\001${appDesc}")
-      bw.newLine()
 
+      // 4-4、 sleep（500），bw新加载一条，br读取下一条传给初始值
       Thread.sleep(500)
+      bw.newLine()
       line = br.readLine()
     }
     //5、IO流 刷新，关闭
@@ -122,7 +121,7 @@ object AppChina {
   }
 
   def main(args: Array[String]): Unit = {
-    // 获取网页中的  appid appname appDtlUrl 保存到yiee_crawler/data/appchina-dtlurls/dtl.urls
+    // 获取网页中的  appid appname appDtlUrl
     getAppDtlUrls("yiee_crawler/data/appchina-dtlurls/dtl.urls")
 
     // 根据获取app清单，分别获取每个详细的app应用数据，保存数据为：app的id ， app名称 ， app相信信息

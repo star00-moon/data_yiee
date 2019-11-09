@@ -75,6 +75,7 @@ object AdsUserGoodsTagExtractor {
           val user_id = bean.user_id
           val gid = idmpDict.get(user_id.hashCode.toLong).get
 
+          // 消费商品模块为 M020
           lst += ((gid, "M020", "T0201", bean.p_sales_cnt.toString, -9999.9))
           lst += ((gid, "M020", "T0202", bean.p_sales_amt.toString, -9999.9))
           lst += ((gid, "M020", "T0203", bean.p_sales_cut_amt.toString, -9999.9))
